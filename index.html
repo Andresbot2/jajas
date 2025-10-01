@@ -12,7 +12,12 @@
         this.robot = null;
         this.box = document.querySelector('#box-to-move').object3D;
         this.isAnimationRunning = false;
-        this.joints = [];
+        
+        // Articulaciones específicas del modelo
+        this.base = null;
+        this.link1 = null;
+        this.link3 = null;
+        this.link4 = null;
 
         const robotEntity = document.querySelector('#robot');
         robotEntity.addEventListener('model-loaded', this.onModelLoaded.bind(this));
@@ -20,41 +25,44 @@
 
       onModelLoaded: function (e) {
         this.robot = e.detail.model;
-        console.log("Modelo del robot cargado. Buscando articulaciones...");
+        console.log("Modelo del robot cargado. Buscando articulaciones específicas...");
 
-        // Búsqueda automática de articulaciones
+        // Buscar articulaciones específicas por nombre
+        this.base = null;
+        this.link1 = null;
+        this.link3 = null;
+        this.link4 = null;
+
         this.robot.traverse(node => {
-          if (node.isMesh && node.parent.name.includes('Link')) {
-            if (!this.joints.includes(node.parent)) {
-              this.joints.push(node.parent);
-            }
+          if (node.name === 'BASE-1') {
+            this.base = node;
+            console.log("✓ Encontrado: BASE-1");
+          } else if (node.name === 'LINK_1-1') {
+            this.link1 = node;
+            console.log("✓ Encontrado: LINK_1-1");
+          } else if (node.name === 'LINK_3-1') {
+            this.link3 = node;
+            console.log("✓ Encontrado: LINK_3-1");
+          } else if (node.name === 'LINK_4-1') {
+            this.link4 = node;
+            console.log("✓ Encontrado: LINK_4-1");
           }
         });
 
-        console.log(`Se encontraron ${this.joints.length} articulaciones.`);
-        this.joints.forEach((joint, index) => {
-          console.log(`Articulación ${index}: ${joint.name}`);
-        });
-
-        // Validar articulaciones
-        if (this.joints.length < 6) {
-          console.error("¡Alerta! No se encontraron suficientes articulaciones.");
-          console.log("Intentando búsqueda alternativa...");
-          
-          // Búsqueda alternativa - todos los objetos con transformaciones
-          this.joints = [];
+        // Validar que se encontraron las articulaciones
+        if (!this.base || !this.link1 || !this.link3 || !this.link4) {
+          console.error("¡Error! No se encontraron todas las articulaciones necesarias.");
+          console.log("Mostrando todos los nodos del modelo:");
           this.robot.traverse(node => {
-            if (node.type === 'Object3D' || node.type === 'Group' || node.isMesh) {
-              if (node.name && node !== this.robot) {
-                this.joints.push(node);
-              }
+            if (node.name) {
+              console.log(`  - ${node.name} (tipo: ${node.type})`);
             }
           });
-          
-          console.log(`Búsqueda alternativa: ${this.joints.length} nodos encontrados`);
+          return;
         }
 
-        console.log("Iniciando secuencia de animación automática en 1 segundo...");
+        console.log("✓ Todas las articulaciones encontradas correctamente");
+        console.log("Iniciando secuencia de animación en 1 segundo...");
         setTimeout(() => {
           this.startFullSequence();
         }, 1000);
@@ -80,53 +88,59 @@
         if (this.isAnimationRunning) return;
         this.isAnimationRunning = true;
 
-        const [base, link1, link2, link3, link4, link5, gripper] = this.joints;
+        console.log("Iniciando secuencia de movimiento...");
 
-        // Secuencia de movimientos
-        const moveToBox = this.createTween(base, { y: -65 })
-          .chain(this.createTween(link1, { x: -45 }))
-          .chain(this.createTween(link2, { x: 70 }))
-          .chain(this.createTween(link4, { x: -115 }));
+        // Movimiento hacia la caja en el conveyor
+        const moveToBox = this.createTween(this.base, { y: -65 }, 2000)
+          .onStart(() => console.log("Rotando base hacia la caja..."));
 
-        const grabBox = this.createTween(link1, { x: -30 })
-          .chain(this.createTween(link2, { x: 45 }));
+        const lowerArm = this.createTween(this.link1, { z: -45 }, 1500)
+          .chain(this.createTween(this.link3, { z: 70 }, 1500))
+          .chain(this.createTween(this.link4, { z: -115 }, 1500))
+          .onStart(() => console.log("Bajando brazo..."));
 
-        const moveToDropzone = this.createTween(base, { y: 65 }, 2000)
-          .chain(this.createTween(link1, { x: -45 }))
-          .chain(this.createTween(link2, { x: 70 }));
+        // Agarrar la caja
+        const grabBox = this.createTween(this.link1, { z: -30 }, 1000)
+          .chain(this.createTween(this.link3, { z: 45 }, 1000))
+          .onStart(() => {
+            console.log("Agarrando la caja...");
+            this.link4.attach(this.box);
+          });
 
-        const releaseBox = this.createTween(link1, { x: -30 })
-          .chain(this.createTween(link2, { x: 45 }));
+        // Mover hacia la zona de descarga
+        const moveToDropzone = this.createTween(this.base, { y: 65 }, 2500)
+          .onStart(() => console.log("Moviendo hacia zona de descarga..."));
 
-        const returnToHome = this.createTween(base, { y: 0 }, 2000)
-          .chain(this.createTween(link1, { x: 0 }))
-          .chain(this.createTween(link2, { x: 0 }))
-          .chain(this.createTween(link4, { x: 0 }));
+        const lowerToRelease = this.createTween(this.link1, { z: -45 }, 1500)
+          .chain(this.createTween(this.link3, { z: 70 }, 1500));
 
-        // Encadenar secuencias
-        moveToBox.chain(grabBox);
+        // Soltar la caja
+        const releaseBox = this.createTween(this.link1, { z: -30 }, 1000)
+          .chain(this.createTween(this.link3, { z: 45 }, 1000))
+          .onStart(() => {
+            console.log("Soltando la caja...");
+            this.el.sceneEl.object3D.attach(this.box);
+          });
+
+        // Volver a la posición inicial
+        const returnToHome = this.createTween(this.base, { y: 0 }, 2000)
+          .chain(this.createTween(this.link1, { z: 0 }, 1500))
+          .chain(this.createTween(this.link3, { z: 0 }, 1500))
+          .chain(this.createTween(this.link4, { z: 0 }, 1500))
+          .onComplete(() => {
+            console.log("✓ Secuencia completada. Robot en posición inicial.");
+            this.isAnimationRunning = false;
+          });
+
+        // Encadenar toda la secuencia
+        moveToBox.chain(lowerArm);
+        lowerArm.chain(grabBox);
         grabBox.chain(moveToDropzone);
-        moveToDropzone.chain(releaseBox);
+        moveToDropzone.chain(lowerToRelease);
+        lowerToRelease.chain(releaseBox);
         releaseBox.chain(returnToHome);
 
-        // Acciones especiales
-        grabBox.onStart(() => {
-          console.log("Agarrando la caja...");
-          if (gripper) {
-            gripper.attach(this.box);
-          }
-        });
-
-        releaseBox.onStart(() => {
-          console.log("Soltando la caja...");
-          this.el.sceneEl.object3D.attach(this.box);
-        });
-
-        returnToHome.onComplete(() => {
-          console.log("Secuencia completada.");
-          this.isAnimationRunning = false;
-        });
-
+        // Iniciar la animación
         moveToBox.start();
       },
 
