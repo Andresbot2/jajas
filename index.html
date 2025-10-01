@@ -79,25 +79,27 @@
                 limited-rotation="minAngle: -45; maxAngle: 45; speed: 20; axis: y">
       </a-entity>
       
-      <!-- Bloque móvil -->
-      <a-box id="moving-block"
-             position="3 0.5 0"
-             width="1" height="1" depth="1"
-             color="#FF6B6B"
-             animation="property: position; 
-                        to: -3 0.5 0; 
-                        from: 3 0.5 0;
-                        dir: alternate; 
-                        loop: true; 
-                        dur: 4000; 
-                        easing: easeInOutSine">
+      <!-- Mesa de trabajo / Banda transportadora -->
+      <a-box position="0 0.3 -1.5" 
+             width="2" height="0.6" depth="1.5" 
+             color="#555555"
+             material="metalness: 0.5; roughness: 0.3">
       </a-box>
       
-      <!-- Marcadores de referencia -->
-      <a-cylinder position="-2 0.5 0" radius="0.1" height="1" color="#FF0000"></a-cylinder>
-      <a-cylinder position="2 0.5 0" radius="0.1" height="1" color="#00FF00"></a-cylinder>
-      <a-cylinder position="0 0.5 -2" radius="0.1" height="1" color="#0000FF"></a-cylinder>
-      <a-cylinder position="0 0.5 2" radius="0.1" height="1" color="#FFFF00"></a-cylinder>
+      <!-- Bloque móvil en proceso -->
+      <a-box id="moving-block"
+             position="-0.8 0.9 -1.5"
+             width="0.4" height="0.4" depth="0.4"
+             color="#FF6B6B"
+             material="metalness: 0.3"
+             animation="property: position; 
+                        to: 0.8 0.9 -1.5; 
+                        from: -0.8 0.9 -1.5;
+                        dir: alternate; 
+                        loop: true; 
+                        dur: 5000; 
+                        easing: linear">
+      </a-box>
     </a-scene>
   </body>
 </html>
