@@ -76,7 +76,7 @@
                 scale="0.5 0.5 0.5"
                 position="0 0 0"
                 rotation="0 0 0"
-                limited-rotation="minAngle: -45; maxAngle: 45; speed: 20; axis: y">
+                limited-rotation="minAngle: -45; maxAngle: 45; speed: 15; axis: y">
       </a-entity>
       
       <!-- Mesa de trabajo / Banda transportadora -->
@@ -88,16 +88,16 @@
       
       <!-- Bloque móvil en proceso -->
       <a-box id="moving-block"
-             position="-0.8 0.9 1.5"
-             width="0.4" height="0.4" depth="0.4"
+             position="-0.6 0.75 1.5"
+             width="0.2" height="0.2" depth="0.2"
              color="#FF6B6B"
              material="metalness: 0.3"
              animation="property: position; 
-                        to: 0.8 0.9 1.5; 
-                        from: -0.8 0.9 1.5;
+                        to: 0.6 0.75 1.5; 
+                        from: -0.6 0.75 1.5;
                         dir: alternate; 
                         loop: true; 
-                        dur: 5000; 
+                        dur: 6000; 
                         easing: linear">
       </a-box>
     </a-scene>
