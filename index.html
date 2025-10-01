@@ -76,21 +76,28 @@
                 scale="0.5 0.5 0.5"
                 position="0 0 0"
                 rotation="0 0 0"
-                limited-rotation="minAngle: -180; maxAngle: 180; speed: 30; axis: y">
+                limited-rotation="minAngle: -45; maxAngle: 45; speed: 20; axis: y">
       </a-entity>
+      
+      <!-- Bloque móvil -->
+      <a-box id="moving-block"
+             position="3 0.5 0"
+             width="1" height="1" depth="1"
+             color="#FF6B6B"
+             animation="property: position; 
+                        to: -3 0.5 0; 
+                        from: 3 0.5 0;
+                        dir: alternate; 
+                        loop: true; 
+                        dur: 4000; 
+                        easing: easeInOutSine">
+      </a-box>
       
       <!-- Marcadores de referencia -->
       <a-cylinder position="-2 0.5 0" radius="0.1" height="1" color="#FF0000"></a-cylinder>
       <a-cylinder position="2 0.5 0" radius="0.1" height="1" color="#00FF00"></a-cylinder>
       <a-cylinder position="0 0.5 -2" radius="0.1" height="1" color="#0000FF"></a-cylinder>
       <a-cylinder position="0 0.5 2" radius="0.1" height="1" color="#FFFF00"></a-cylinder>
-      
-      <!-- Instrucciones -->
-      <a-text value="Usa WASD para moverte\nMouse para mirar" 
-              position="-3 3 -5" 
-              scale="2 2 2"
-              color="#000000"
-              align="center"></a-text>
     </a-scene>
   </body>
 </html>
