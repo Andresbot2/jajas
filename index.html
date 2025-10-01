@@ -93,41 +93,41 @@
 
         console.log("Iniciando secuencia de movimiento GP12...");
 
-        // Movimiento hacia la caja en el conveyor
-        const moveToBox = this.createTween(this.baseAxis, { y: -65 }, 2000)
-          .onStart(() => console.log("Rotando base hacia la caja..."));
+        // Probar rotación en todos los ejes para encontrar el correcto
+        const moveToBox = this.createTween(this.baseAxis, { y: 90 }, 2000)
+          .onStart(() => console.log("Rotando base hacia la caja (Y axis)..."));
 
-        const lowerArm = this.createTween(this.sAxis, { z: -45 }, 1500)
-          .chain(this.createTween(this.lAxis, { z: 70 }, 1500))
+        const lowerArm = this.createTween(this.sAxis, { x: 45, y: 0, z: 0 }, 1500)
+          .chain(this.createTween(this.lAxis, { x: -45, y: 0, z: 0 }, 1500))
           .onStart(() => console.log("Bajando brazo..."));
 
         // Agarrar la caja
-        const grabBox = this.createTween(this.sAxis, { z: -30 }, 1000)
-          .chain(this.createTween(this.lAxis, { z: 45 }, 1000))
+        const grabBox = this.createTween(this.sAxis, { x: 30 }, 1000)
+          .chain(this.createTween(this.lAxis, { x: -30 }, 1000))
           .onStart(() => {
             console.log("Agarrando la caja...");
             this.lAxis.attach(this.box);
           });
 
         // Mover hacia la zona de descarga
-        const moveToDropzone = this.createTween(this.baseAxis, { y: 65 }, 2500)
+        const moveToDropzone = this.createTween(this.baseAxis, { y: -90 }, 2500)
           .onStart(() => console.log("Moviendo hacia zona de descarga..."));
 
-        const lowerToRelease = this.createTween(this.sAxis, { z: -45 }, 1500)
-          .chain(this.createTween(this.lAxis, { z: 70 }, 1500));
+        const lowerToRelease = this.createTween(this.sAxis, { x: 45 }, 1500)
+          .chain(this.createTween(this.lAxis, { x: -45 }, 1500));
 
         // Soltar la caja
-        const releaseBox = this.createTween(this.sAxis, { z: -30 }, 1000)
-          .chain(this.createTween(this.lAxis, { z: 45 }, 1000))
+        const releaseBox = this.createTween(this.sAxis, { x: 30 }, 1000)
+          .chain(this.createTween(this.lAxis, { x: -30 }, 1000))
           .onStart(() => {
             console.log("Soltando la caja...");
             this.el.sceneEl.object3D.attach(this.box);
           });
 
         // Volver a la posición inicial
-        const returnToHome = this.createTween(this.baseAxis, { y: 0 }, 2000)
-          .chain(this.createTween(this.sAxis, { z: 0 }, 1500))
-          .chain(this.createTween(this.lAxis, { z: 0 }, 1500))
+        const returnToHome = this.createTween(this.baseAxis, { x: 0, y: 0, z: 0 }, 2000)
+          .chain(this.createTween(this.sAxis, { x: 0, y: 0, z: 0 }, 1500))
+          .chain(this.createTween(this.lAxis, { x: 0, y: 0, z: 0 }, 1500))
           .onComplete(() => {
             console.log("✓ Secuencia completada. Robot GP12 en posición inicial.");
             this.isAnimationRunning = false;
