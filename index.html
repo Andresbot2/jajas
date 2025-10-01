@@ -25,6 +25,16 @@
       onModelLoaded: function (e) {
         this.robot = e.detail.model;
         console.log("Modelo GP12 cargado. Buscando articulaciones específicas...");
+        console.log("==================== LISTADO COMPLETO DE NODOS ====================");
+
+        // Primero, listar TODOS los nodos para ver qué tenemos
+        this.robot.traverse(node => {
+          if (node.name) {
+            console.log(`  📦 ${node.name} (tipo: ${node.type})`);
+          }
+        });
+
+        console.log("==================== FIN DEL LISTADO ====================");
 
         // Buscar articulaciones específicas del GP12 por nombre
         this.baseAxis = null;
@@ -32,27 +42,25 @@
         this.lAxis = null;
 
         this.robot.traverse(node => {
-          if (node.name === 'P12_BASE_AXIS_GP12_AR1440_Standard.STEP-1') {
+          if (node.name === 'GP12_AR1440' || node.name === 'GP12_AR1440STEP') {
             this.baseAxis = node;
-            console.log("✓ Encontrado: P12_BASE_AXIS (Base)");
-          } else if (node.name === 'GP12_S_AXIS_GP12_AR1440.STEP-1') {
+            console.log("✓ Encontrado: GP12_AR1440 (Base)", node);
+          } else if (node.name === 'GP12_S_AXIS_GP12_AR1440STEP-1') {
             this.sAxis = node;
-            console.log("✓ Encontrado: GP12_S_AXIS (Shoulder)");
-          } else if (node.name === 'GP12_L_AXIS_GP12_AR1440_Standard.STEP-1') {
+            console.log("✓ Encontrado: GP12_S_AXIS (Shoulder)", node);
+          } else if (node.name === 'GP12_L_AXIS_GP12_AR1440_StandardSTEP-1') {
             this.lAxis = node;
-            console.log("✓ Encontrado: GP12_L_AXIS (Lower)");
+            console.log("✓ Encontrado: GP12_L_AXIS (Lower)", node);
           }
         });
 
         // Validar que se encontraron las articulaciones
         if (!this.baseAxis || !this.sAxis || !this.lAxis) {
-          console.error("¡Error! No se encontraron todas las articulaciones necesarias.");
-          console.log("Mostrando todos los nodos del modelo:");
-          this.robot.traverse(node => {
-            if (node.name) {
-              console.log(`  - ${node.name} (tipo: ${node.type})`);
-            }
-          });
+          console.error("❌ No se encontraron todas las articulaciones necesarias:");
+          console.log("  Base:", this.baseAxis ? "✓" : "✗");
+          console.log("  S-Axis:", this.sAxis ? "✓" : "✗");
+          console.log("  L-Axis:", this.lAxis ? "✓" : "✗");
+          console.log("\n💡 Copia los nombres exactos de arriba y dímelos para actualizarlos.");
           return;
         }
 
