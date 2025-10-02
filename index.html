@@ -74,27 +74,27 @@
       <a-entity id="robot" 
                 gltf-model="GP12_AR1440.glb" 
                 scale="0.5 0.5 0.5"
-                position="0 0 0.3"
+                position="0 0 -0.1"
                 rotation="0 0 0"
                 limited-rotation="minAngle: -45; maxAngle: 45; speed: 15; axis: y">
       </a-entity>
       
       <!-- Mesa de trabajo / Banda transportadora -->
-      <a-box position="0 0.3 0.8" 
-             width="1.2" height="0.4" depth="0.8" 
+      <a-box position="0 0.2 0.8" 
+             width="1.2" height="0.2" depth="0.8" 
              color="#555555"
              material="metalness: 0.5; roughness: 0.3">
       </a-box>
       
       <!-- Bloque móvil en proceso -->
       <a-box id="moving-block"
-             position="-0.4 0.6 0.8"
+             position="-0.4 0.45 0.8"
              width="0.15" height="0.15" depth="0.15"
              color="#FF6B6B"
              material="metalness: 0.3"
              animation="property: position; 
-                        to: 0.4 0.6 0.8; 
-                        from: -0.4 0.6 0.8;
+                        to: 0.4 0.45 0.8; 
+                        from: -0.4 0.45 0.8;
                         dir: alternate; 
                         loop: true; 
                         dur: 6000; 
